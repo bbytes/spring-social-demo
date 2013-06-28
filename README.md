@@ -19,6 +19,6 @@ The embedded jetty server would print the following text in console
     Enter :q and hit enter to quit:
 
 Point the browser to 
-> http://localhost:9999
+>  http://localhost:9999
 
 And the login page would come up as root url
