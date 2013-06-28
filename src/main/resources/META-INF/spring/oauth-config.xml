@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+
+	<bean id="connectionFactoryLocator"
+		class="org.springframework.social.connect.support.ConnectionFactoryRegistry">
+		<property name="connectionFactories">
+			<list>
+				<bean id="google"
+					class="org.springframework.social.google.connect.GoogleConnectionFactory">
+					<constructor-arg value="${google.clientId}" />
+					<constructor-arg value="${google.clientSecret}" />
+				</bean>
+				<bean id="facebook"
+					class="org.springframework.social.facebook.connect.FacebookConnectionFactory">
+					<constructor-arg value="${facebook.clientId}" />
+					<constructor-arg value="${facebook.clientSecret}" />
+				</bean>
+				<bean id="github"
+					class="org.springframework.social.github.connect.GitHubConnectionFactory">
+					<constructor-arg value="${github.clientId}" />
+					<constructor-arg value="${github.clientSecret}" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="usersConnectionRepository"
+		class="org.springframework.social.connect.mongo.MongoUsersConnectionRepository">
+	</bean>
+
+	<bean id="connectionRepository" factory-method="createConnectionRepository"
+		factory-bean="usersConnectionRepository" scope="request">
+		<constructor-arg value="#{request.userPrincipal.name}" />
+		<aop:scoped-proxy proxy-target-class="false" />
+	</bean>
+
+	<bean id="textEncryptor" class="org.springframework.security.crypto.encrypt.Encryptors"
+		factory-method="noOpText" />
+
+	<bean id="requestCache"
+		class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"></bean>
+
+
+	<bean id="signInAdapter" class="org.springframework.social.signin.SimpleSignInAdapter"
+		autowire="constructor" />
+
+
+	<bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+		<constructor-arg value="256" />
+	</bean>
+
+
+</beans>
